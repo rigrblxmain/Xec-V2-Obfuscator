@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Xec v2 | Ghost Obfuscator</title>
+    <style>
+        :root { --primary: #00ffaa; --bg: #0a0a0a; }
+        body { background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 40px; }
+        .container { width: 100%; max-width: 800px; background: #111; padding: 30px; border-radius: 12px; border: 1px solid #222; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .header { font-size: 28px; font-weight: 900; color: var(--primary); text-align: center; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #555; font-size: 13px; margin-bottom: 25px; }
+        textarea { width: 100%; height: 200px; background: #050505; color: #00ffaa; border: 1px solid #222; border-radius: 8px; padding: 15px; margin-bottom: 15px; font-family: monospace; resize: none; outline: none; box-sizing: border-box; }
+        button { width: 100%; padding: 16px; background: var(--primary); color: #000; border: none; cursor: pointer; font-weight: bold; border-radius: 8px; font-size: 16px; }
+        .discord-tag { margin-top: 20px; text-align: center; font-size: 12px; color: #444; }
+        .discord-tag b { color: #5865F2; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">XEC V2 DEOBFUSCATOR</div>
+        <div class="subtitle">no it wont get deobf by others</div>
+        
+        <textarea id="input" placeholder="-- Xec its gud lol"></textarea>
+        <button onclick="generate()">OBFUSCATE</button>
+        
+        <textarea id="output" readonly style="margin-top:20px; height: 150px;" placeholder="Protected script..."></textarea>
+        <div class="discord-tag">Contact me if u need deobf: <b>@718smiley.png</b></div>
+    </div>
+
+    <script>
+        const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+        function generate() {
+            const src = document.getElementById('input').value;
+            if(!src) return;
+            const key = charset.split('').sort(() => Math.random() - 0.5).join('');
+            const b64 = btoa(unescape(encodeURIComponent(src)));
+            let enc = "";
+            for (let i = 0; i < b64.length; i++) {
+                let idx = charset.indexOf(b64[i]);
+                enc += (idx !== -1) ? key[idx] : b64[i];
+            }
+            let res = `--[[ Obfuscated by Xec v2 ]]\n`;
+            res += `local _0xK = "${key}"\n`;
+            res += `local _0xD = "${enc}"\n`;
+            res += `local _0xS = "${charset}"\n`;
+            res += `local _0xR = (loadstring or load)((function(d,k,s) local m={} for i=1,#s do m[k:sub(i,i)]=s:sub(i,i) end local r="" for i=1,#d do local c=d:sub(i,i) r=r..(m[c] or c) end local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/' return (r:gsub('.', function(x) if x=='=' then return '' end local r,f='',b:find(x)-1 for i=6,1,-1 do r=r..(f%2^i-f%2^(i-1)>0 and '1' or '0') end return r end):gsub('%d%d%d%d%d%d%d%d', function(x) local c=0 for i=1,8 do c=c+(x:sub(i,i)=='1' and 2^(8-i) or 0) end return string.char(c) end)) end)(_0xD, _0xK, _0xS))\n`;
+            res += `_0xR()`;
+            document.getElementById('output').value = res;
+        }
+    </script>
+</body>
+</html>
