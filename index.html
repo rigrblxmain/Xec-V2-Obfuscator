@@ -5,24 +5,75 @@
     <title>Xec v2 Obfuscator</title>
     <style>
         :root { --bg: #0b0b0b; --accent: #00ffaa; --border: #222; --text: #888; }
+        
+        /* Custom Neon Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
         body { 
             background: var(--bg); color: #eee; font-family: 'Inter', 'Segoe UI', sans-serif; 
             margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh;
+            overflow: hidden; 
         }
-        .container { width: 900px; padding: 40px; }
+
+        /* --- Intro / Splash Styles --- */
+        #splash {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; display: flex; justify-content: center; align-items: center;
+            z-index: 9999; transition: background 1.5s ease;
+        }
+
+        #logo-icon {
+            width: 300px;
+            transition: all 1.2s cubic-bezier(0.85, 0, 0.15, 1);
+            z-index: 10000;
+        }
+
+        .icon-at-corner {
+            position: fixed !important;
+            top: 25px !important;
+            left: 25px !important;
+            width: 35px !important;
+            transform: translate(0, 0) !important;
+        }
+
+        /* --- Download Button --- */
+        .download-corner {
+            position: fixed; top: 20px; right: 20px; z-index: 500;
+            opacity: 0; transition: 0.8s;
+        }
+        .btn-download {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+            color: #fff; padding: 10px 18px; border-radius: 6px;
+            font-size: 11px; text-decoration: none; font-weight: bold; transition: 0.3s;
+            letter-spacing: 1px;
+        }
+        .btn-download:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 15px rgba(0,255,170,0.15); }
+
+        /* --- Main UI --- */
+        .container { 
+            width: 900px; padding: 40px; 
+            opacity: 0; transition: opacity 1.5s ease;
+        }
+        .show-ui { opacity: 1 !important; }
+
         .header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-        .header h1 { font-size: 18px; letter-spacing: 4px; margin: 0; color: #fff; }
+        .header h1 { font-size: 18px; letter-spacing: 4px; margin: 0 0 0 60px; color: #fff; text-transform: uppercase; } 
         .header span { font-size: 10px; color: var(--text); font-weight: bold; }
 
         .section { margin-bottom: 20px; }
         .label { font-size: 9px; color: var(--text); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
         
         textarea { 
-            width: 100%; background: #000; color: var(--accent); border: 1px solid var(--border); 
+            width: 100%; background: #050505; color: var(--accent); border: 1px solid var(--border); 
             padding: 15px; box-sizing: border-box; border-radius: 4px; resize: none; 
             font-family: 'Fira Code', 'Consolas', monospace; font-size: 11px; outline: none;
+            transition: 0.3s;
         }
-        textarea:focus { border-color: #444; }
+        textarea:focus { border-color: #444; background: #080808; }
 
         .controls { display: flex; gap: 10px; margin: 20px 0; }
         button { 
@@ -32,32 +83,50 @@
         }
         button:hover { background: #fff; color: #000; border-color: #fff; }
         .btn-obf { border-color: var(--accent); color: var(--accent); }
-        .btn-obf:hover { background: var(--accent); color: #000; border-color: var(--accent); }
+        .btn-obf:hover { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 10px rgba(0,255,170,0.2); }
 
         .footer { 
             display: flex; justify-content: space-between; align-items: center; 
             margin-top: 30px; border-top: 1px solid var(--border); padding-top: 15px;
             font-size: 10px; color: var(--text);
         }
-        .contact-link { color: var(--text); text-decoration: none; transition: 0.2s; border-bottom: 1px solid transparent; }
-        .contact-link:hover { color: #fff; border-bottom: 1px solid #fff; }
+
+        /* Obvious Discord Link */
+        .contact-link { 
+            color: var(--accent); text-decoration: none; font-weight: bold; 
+            padding: 4px 10px; border: 1px solid var(--accent); border-radius: 4px; 
+            transition: 0.3s; text-transform: uppercase; font-size: 9px;
+        }
+        .contact-link:hover { background: var(--accent); color: #000; box-shadow: 0 0 10px var(--accent); }
     </style>
 </head>
 <body>
-    <div class="container">
+
+    <div id="splash">
+        <img src="image-Photoroom (12).png" id="logo-icon">
+    </div>
+
+    <div class="download-corner" id="dl-btn">
+        <a href="#" class="btn-download">
+            <svg width="14" height="14" viewBox="0 0 88 88" fill="currentColor"><path d="M0 12l35-5v35h-35v-30zm38-6l50-8v43h-50v-35zm50 40l0 43-50-8v-35h50zm-53 3l0 35-35-5v-30h35z"/></svg>
+            GET WINDOWS VERSION
+        </a>
+    </div>
+
+    <div class="container" id="main-ui">
         <div class="header">
-            <h1>Xec V2 | #1 Best luau Obfuscator</h1>
-            <span>Version: 0.25.2a</span>
+            <h1>Xec V2 | #1 Luau Obfuscator</h1>
+            <span>BUILD: 0.25.2a</span>
         </div>
 
         <div class="section">
-            <div class="label">Header comments</div>
-            <textarea id="ascii" style="height: 100px;" placeholder="-- Ascii or smth here."></textarea>
+            <div class="label">Header / ASCII</div>
+            <textarea id="ascii" style="height: 100px;" placeholder="-- Input your custom ASCII header here..."></textarea>
         </div>
 
         <div class="section">
-            <div class="label">luau</div>
-            <textarea id="source" style="height: 180px;" placeholder="-- Input."></textarea>
+            <div class="label">Source Code (Luau)</div>
+            <textarea id="source" style="height: 180px;" placeholder="-- Paste your script here..."></textarea>
         </div>
 
         <div class="controls">
@@ -68,16 +137,35 @@
 
         <div class="section">
             <div class="label">Output</div>
-            <textarea id="output" style="height: 180px;" readonly></textarea>
+            <textarea id="output" style="height: 180px;" readonly placeholder="-- Obfuscated result will appear here."></textarea>
         </div>
 
         <div class="footer">
-            <div>&copy; XEC V2</div>
-            <div>Deobfuscate: <a href="https://discord.com/users/718smiley.png" target="_blank" class="contact-link">L_EpicGuy</a></div>
+            <div>&copy; XEC V2 PROJECT</div>
+            <div>Support: <a href="https://discord.com/users/718smiley.png" target="_blank" class="contact-link">Contact L_EpicGuy</a></div>
         </div>
     </div>
 
     <script>
+        window.onload = () => {
+            const icon = document.getElementById('logo-icon');
+            const splash = document.getElementById('splash');
+            const ui = document.getElementById('main-ui');
+            const dl = document.getElementById('dl-btn');
+
+            setTimeout(() => {
+                icon.classList.add('icon-at-corner');
+                splash.style.background = "transparent";
+                ui.classList.add('show-ui');
+                dl.style.opacity = "1";
+                document.body.style.overflow = "auto";
+                
+                setTimeout(() => { 
+                    splash.style.display = "none"; 
+                }, 1500);
+            }, 1200);
+        };
+
         function build() {
             const ascii = document.getElementById('ascii').value;
             const src = document.getElementById('source').value;
@@ -98,7 +186,7 @@
             for (let b of bytes) { hex += (b ^ salt).toString(16).padStart(2, '0'); }
 
             const chunks = hex.match(/.{1,100}/g);
-            let res = head + `--[[ Obfuscated by Xec v2 ]]\nlocal _v = ""\n`;
+            let res = head + `--[[ Obfuscated by Xec v2 ]]--\nlocal _v = ""\n`;
             chunks.forEach(c => { res += `_v = _v .. "${c}"\n`; });
             res += `\nlocal _k = ${salt}\nlocal _b = {}\nfor i=1,#_v,2 do table.insert(_b,string.char(bit32.bxor(tonumber(_v:sub(i,i+1),16),_k))) end\nloadstring(table.concat(_b))()`;
 
