@@ -21,22 +21,24 @@
         /* --- Intro / Splash Styles --- */
         #splash {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; display: flex; justify-content: center; align-items: center;
-            z-index: 9999; transition: background 1.5s ease;
+            background: #000; z-index: 9998; transition: opacity 1s ease;
         }
 
         #logo-icon {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Start perfectly centered */
             width: 300px;
             transition: all 1.2s cubic-bezier(0.85, 0, 0.15, 1);
             z-index: 10000;
         }
 
         .icon-at-corner {
-            position: fixed !important;
             top: 25px !important;
             left: 25px !important;
+            transform: translate(0, 0) !important; /* Move to actual 25,25 */
             width: 35px !important;
-            transform: translate(0, 0) !important;
         }
 
         /* --- Download Button --- */
@@ -91,7 +93,6 @@
             font-size: 10px; color: var(--text);
         }
 
-        /* Obvious Discord Link */
         .contact-link { 
             color: var(--accent); text-decoration: none; font-weight: bold; 
             padding: 4px 10px; border: 1px solid var(--accent); border-radius: 4px; 
@@ -102,14 +103,13 @@
 </head>
 <body>
 
-    <div id="splash">
-        <img src="logo.png" id="logo-icon">
-    </div>
+    <div id="splash"></div>
+    <img src="logo.png" id="logo-icon">
 
     <div class="download-corner" id="dl-btn">
         <a href="#" class="btn-download">
             <svg width="14" height="14" viewBox="0 0 88 88" fill="currentColor"><path d="M0 12l35-5v35h-35v-30zm38-6l50-8v43h-50v-35zm50 40l0 43-50-8v-35h50zm-53 3l0 35-35-5v-30h35z"/></svg>
-            GET EXE VERSION
+            GET WINDOWS VERSION
         </a>
     </div>
 
@@ -154,16 +154,22 @@
             const dl = document.getElementById('dl-btn');
 
             setTimeout(() => {
+                // 1. Shrink and move icon
                 icon.classList.add('icon-at-corner');
-                splash.style.background = "transparent";
+                
+                // 2. Fade black background
+                splash.style.opacity = "0";
+                
+                // 3. Reveal UI and Download
                 ui.classList.add('show-ui');
                 dl.style.opacity = "1";
                 document.body.style.overflow = "auto";
                 
+                // 4. Remove background block entirely after fade
                 setTimeout(() => { 
                     splash.style.display = "none"; 
-                }, 1500);
-            }, 1200);
+                }, 1000);
+            }, 1000);
         };
 
         function build() {
@@ -186,7 +192,7 @@
             for (let b of bytes) { hex += (b ^ salt).toString(16).padStart(2, '0'); }
 
             const chunks = hex.match(/.{1,100}/g);
-            let res = head + `--[[ Obfuscated by Xec v2 ]]--\nlocal _v = ""\n`;
+            let res = head + `--[[ Obfuscated by Xec v2 ]]\nlocal _v = ""\n`;
             chunks.forEach(c => { res += `_v = _v .. "${c}"\n`; });
             res += `\nlocal _k = ${salt}\nlocal _b = {}\nfor i=1,#_v,2 do table.insert(_b,string.char(bit32.bxor(tonumber(_v:sub(i,i+1),16),_k))) end\nloadstring(table.concat(_b))()`;
 
@@ -207,5 +213,3 @@
     </script>
 </body>
 </html>
-
-
