@@ -4,9 +4,15 @@
     <meta charset="UTF-8">
     <title>Xec v2 Obfuscator</title>
     <style>
-        :root { --bg: #0b0b0b; --accent: #00ffaa; --border: #222; --text: #888; }
+        :root { 
+            --bg: #0b0b0b; 
+            --nav-bg: #090311; 
+            --accent: #00ffaa; 
+            --border: #222; 
+            --text: #888; 
+            --nav-text: #a1a1aa;
+        }
         
-        /* Custom Neon Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #000; }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
@@ -14,119 +20,115 @@
 
         body { 
             background: var(--bg); color: #eee; font-family: 'Inter', 'Segoe UI', sans-serif; 
-            margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh;
+            margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh;
             overflow: hidden; 
         }
 
-        /* --- Intro / Splash Styles --- */
+        /* --- INTRO TEXT & LOGO --- */
         #splash {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 9998; transition: opacity 1s ease;
         }
 
-        #logo-icon {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%); /* Start perfectly centered */
-            width: 300px;
-            transition: all 1.2s cubic-bezier(0.85, 0, 0.15, 1);
-            z-index: 10000;
+        #intro-container {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            display: flex; align-items: center; z-index: 10000; gap: 20px;
         }
+
+        #logo-icon {
+            width: 250px;
+            transition: all 1.2s cubic-bezier(0.85, 0, 0.15, 1);
+        }
+
+        #intro-text {
+            font-size: 28px; font-weight: bold; letter-spacing: 6px; color: var(--accent);
+            text-transform: uppercase; white-space: nowrap;
+            opacity: 0; transform: translateX(-30px); /* Start hidden/left */
+            transition: all 0.8s ease-out;
+            text-shadow: 0 0 15px rgba(0, 255, 170, 0.4);
+        }
+
+        /* Animation States */
+        .text-slide-in { opacity: 1 !important; transform: translateX(0) !important; }
+        .text-fade-out { opacity: 0 !important; }
 
         .icon-at-corner {
-            top: 25px !important;
-            left: 25px !important;
-            transform: translate(0, 0) !important; /* Move to actual 25,25 */
-            width: 35px !important;
+            position: fixed !important; top: 25px !important; left: 25px !important;
+            transform: translate(0, 0) !important; width: 35px !important;
         }
 
-        /* --- Download Button --- */
-        .download-corner {
-            position: fixed; top: 20px; right: 20px; z-index: 500;
-            opacity: 0; transition: 0.8s;
+        /* --- TOP NAV --- */
+        .top-nav {
+            width: 100%; height: 60px; background: var(--nav-bg);
+            display: flex; justify-content: center; align-items: center; gap: 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: fixed; top: 0; z-index: 1000; opacity: 0; transition: opacity 1s ease;
         }
-        .btn-download {
-            display: flex; align-items: center; gap: 8px;
-            background: rgba(255,255,255,0.03); border: 1px solid var(--border);
-            color: #fff; padding: 10px 18px; border-radius: 6px;
-            font-size: 11px; text-decoration: none; font-weight: bold; transition: 0.3s;
-            letter-spacing: 1px;
-        }
-        .btn-download:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 15px rgba(0,255,170,0.15); }
 
-        /* --- Main UI --- */
+        .nav-link { color: var(--nav-text); text-decoration: none; font-size: 14px; transition: 0.3s; }
+        .nav-link:hover { color: #fff; }
+
+        /* --- UI CONTAINER --- */
         .container { 
-            width: 900px; padding: 40px; 
+            width: 900px; padding: 40px; margin-top: 80px;
             opacity: 0; transition: opacity 1.5s ease;
         }
         .show-ui { opacity: 1 !important; }
 
         .header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-        .header h1 { font-size: 18px; letter-spacing: 4px; margin: 0 0 0 60px; color: #fff; text-transform: uppercase; } 
-        .header span { font-size: 10px; color: var(--text); font-weight: bold; }
-
-        .section { margin-bottom: 20px; }
-        .label { font-size: 9px; color: var(--text); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+        .header h1 { font-size: 18px; letter-spacing: 4px; margin: 0; color: #fff; } 
         
         textarea { 
             width: 100%; background: #050505; color: var(--accent); border: 1px solid var(--border); 
             padding: 15px; box-sizing: border-box; border-radius: 4px; resize: none; 
             font-family: 'Fira Code', 'Consolas', monospace; font-size: 11px; outline: none;
-            transition: 0.3s;
         }
-        textarea:focus { border-color: #444; background: #080808; }
 
         .controls { display: flex; gap: 10px; margin: 20px 0; }
         button { 
             background: transparent; border: 1px solid var(--border); color: #fff; 
-            padding: 10px 25px; font-size: 11px; cursor: pointer; text-transform: uppercase; 
-            letter-spacing: 1px; transition: 0.2s;
+            padding: 10px 25px; font-size: 11px; cursor: pointer; text-transform: uppercase; transition: 0.2s;
         }
-        button:hover { background: #fff; color: #000; border-color: #fff; }
+        button:hover { background: #fff; color: #000; }
         .btn-obf { border-color: var(--accent); color: var(--accent); }
-        .btn-obf:hover { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 10px rgba(0,255,170,0.2); }
+        .btn-obf:hover { background: var(--accent); color: #000; }
 
-        .footer { 
-            display: flex; justify-content: space-between; align-items: center; 
-            margin-top: 30px; border-top: 1px solid var(--border); padding-top: 15px;
-            font-size: 10px; color: var(--text);
-        }
-
-        .contact-link { 
-            color: var(--accent); text-decoration: none; font-weight: bold; 
-            padding: 4px 10px; border: 1px solid var(--accent); border-radius: 4px; 
-            transition: 0.3s; text-transform: uppercase; font-size: 9px;
-        }
-        .contact-link:hover { background: var(--accent); color: #000; box-shadow: 0 0 10px var(--accent); }
+        .footer { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; border-top: 1px solid var(--border); padding-top: 15px; font-size: 10px; color: var(--text); }
+        .contact-link { color: var(--accent); text-decoration: none; font-weight: bold; padding: 4px 10px; border: 1px solid var(--accent); border-radius: 4px; transition: 0.3s; }
     </style>
 </head>
 <body>
 
     <div id="splash"></div>
-    <img src="logo.png" id="logo-icon">
-
-    <div class="download-corner" id="dl-btn">
-        <a href="#" class="btn-download">
-            <svg width="14" height="14" viewBox="0 0 88 88" fill="currentColor"><path d="M0 12l35-5v35h-35v-30zm38-6l50-8v43h-50v-35zm50 40l0 43-50-8v-35h50zm-53 3l0 35-35-5v-30h35z"/></svg>
-            GET WINDOWS VERSION
-        </a>
+    
+    <div id="intro-container">
+        <img src="logo.png" id="logo-icon">
+        <div id="intro-text">X e c &nbsp; V 2 &nbsp; O b f u s c a t o r</div>
     </div>
+
+    <nav class="top-nav" id="top-nav">
+        <a href="#" class="nav-link">Home</a>
+        <a href="#" class="nav-link">Policy</a>
+        <a href="#" class="nav-link">Plans</a>
+        <a href="#" class="nav-link">Showcases</a>
+        <a href="#" class="nav-link">FAQ</a>
+        <a href="https://discord.com/users/718smiley.png" target="_blank" class="nav-link">Discord</a>
+    </nav>
 
     <div class="container" id="main-ui">
         <div class="header">
-            <h1>Xec V2 | #1 Luau Obfuscator</h1>
-            <span>BUILD: 0.25.2a</span>
+            <h1>Xec V2 | Luau Obfuscator</h1>
+            <span>0.25.2a</span>
         </div>
 
         <div class="section">
             <div class="label">Header / ASCII</div>
-            <textarea id="ascii" style="height: 100px;" placeholder="-- Input your custom ASCII header here..."></textarea>
+            <textarea id="ascii" style="height: 100px;"></textarea>
         </div>
 
         <div class="section">
-            <div class="label">Source Code (Luau)</div>
-            <textarea id="source" style="height: 180px;" placeholder="-- Paste your script here..."></textarea>
+            <div class="label">Source Code</div>
+            <textarea id="source" style="height: 180px;"></textarea>
         </div>
 
         <div class="controls">
@@ -137,65 +139,54 @@
 
         <div class="section">
             <div class="label">Output</div>
-            <textarea id="output" style="height: 180px;" readonly placeholder="-- Obfuscated result will appear here."></textarea>
+            <textarea id="output" style="height: 180px;" readonly></textarea>
         </div>
 
         <div class="footer">
-            <div>&copy; XEC V2 PROJECT</div>
-            <div>Support: <a href="https://discord.com/users/718smiley.png" target="_blank" class="contact-link">Contact L_EpicGuy</a></div>
+            <div>&copy; XEC V2</div>
+            <div>Support: <a href="https://discord.com/users/718smiley.png" target="_blank" class="contact-link">L_EpicGuy</a></div>
         </div>
     </div>
 
     <script>
         window.onload = () => {
             const icon = document.getElementById('logo-icon');
+            const text = document.getElementById('intro-text');
             const splash = document.getElementById('splash');
             const ui = document.getElementById('main-ui');
-            const dl = document.getElementById('dl-btn');
+            const nav = document.getElementById('top-nav');
 
+            // 1. Slide Text in
             setTimeout(() => {
-                // 1. Shrink and move icon
+                text.classList.add('text-slide-in');
+            }, 500);
+
+            // 2. Start shrinking and fade text out
+            setTimeout(() => {
+                text.classList.add('text-fade-out');
                 icon.classList.add('icon-at-corner');
-                
-                // 2. Fade black background
                 splash.style.opacity = "0";
                 
-                // 3. Reveal UI and Download
+                // Show UI
                 ui.classList.add('show-ui');
-                dl.style.opacity = "1";
-                document.body.style.overflow = "auto";
+                nav.style.opacity = "1";
+                document.body.style.overflowY = "auto";
                 
-                // 4. Remove background block entirely after fade
-                setTimeout(() => { 
-                    splash.style.display = "none"; 
-                }, 1000);
-            }, 1000);
+                setTimeout(() => { splash.style.display = "none"; }, 1000);
+            }, 2500); // Wait 2.5s before moving
         };
 
         function build() {
-            const ascii = document.getElementById('ascii').value;
             const src = document.getElementById('source').value;
             if(!src) return;
-
-            const inv = "\u2004"; 
-            let head = "";
-            if(ascii) {
-                ascii.split('\n').forEach(l => { head += "--" + l.replace(/ /g, inv) + "\n"; });
-                head += "--\n--\n--\n--\n--\n--\n";
-            } else {
-                head = "--\n--\n--\n--\n--\n--\n";
-            }
-
             const salt = Math.floor(Math.random() * 50) + 100;
             const bytes = new TextEncoder().encode(src);
             let hex = "";
             for (let b of bytes) { hex += (b ^ salt).toString(16).padStart(2, '0'); }
-
             const chunks = hex.match(/.{1,100}/g);
-            let res = head + `--[[ Obfuscated by Xec v2 ]]\nlocal _v = ""\n`;
+            let res = `--[[ Xec v2 ]]\nlocal _v = ""\n`;
             chunks.forEach(c => { res += `_v = _v .. "${c}"\n`; });
             res += `\nlocal _k = ${salt}\nlocal _b = {}\nfor i=1,#_v,2 do table.insert(_b,string.char(bit32.bxor(tonumber(_v:sub(i,i+1),16),_k))) end\nloadstring(table.concat(_b))()`;
-
             document.getElementById('output').value = res;
         }
 
@@ -206,7 +197,6 @@
         }
 
         function clearAll() {
-            document.getElementById('ascii').value = "";
             document.getElementById('source').value = "";
             document.getElementById('output').value = "";
         }
