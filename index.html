@@ -6,7 +6,8 @@
     <style>
         :root { 
             --bg: #0b0b0b; 
-            --nav-bg: #090311; 
+            /* 比背景色稍微浅一点点的灰色 */
+            --nav-bg: #151515; 
             --accent: #00ffaa; 
             --border: #222; 
             --text: #888; 
@@ -38,25 +39,23 @@
         }
 
         #logo-icon {
-            width: 200px; /* 初始大小 */
+            width: 220px; 
             transition: all 1.2s cubic-bezier(0.85, 0, 0.15, 1);
         }
 
         #intro-text {
-            font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #fff; /* 改为白色 */
+            font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #fff; 
             text-transform: uppercase; white-space: nowrap;
-            opacity: 0; width: 0; overflow: hidden; /* 初始隐藏且不占位 */
+            opacity: 0; width: 0; overflow: hidden;
             transition: all 0.8s ease-out;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-            margin-left: 0;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
         }
 
-        /* 动画状态：文字展开 */
+        /* 动画激活状态 */
         .show-text #intro-text {
-            opacity: 1; width: 450px; margin-left: 30px;
+            opacity: 1; width: 480px; margin-left: 35px;
         }
 
-        /* 动画状态：Icon 归位到左上角 */
         .move-to-corner {
             top: 30px !important; left: 30px !important;
             transform: translate(0, 0) !important;
@@ -64,15 +63,31 @@
         .move-to-corner #logo-icon { width: 35px !important; }
         .move-to-corner #intro-text { opacity: 0 !important; width: 0 !important; margin-left: 0 !important; }
 
-        /* --- 顶部导航栏 --- */
+        /* --- 修改后的 Top Bar (浅灰色+靠右) --- */
         .top-nav {
-            width: 100%; height: 60px; background: var(--nav-bg);
-            display: flex; justify-content: center; align-items: center; gap: 40px;
+            width: 100%; height: 60px; 
+            background: var(--nav-bg);
+            display: flex; 
+            justify-content: flex-end; /* 按钮靠右 */
+            align-items: center; 
+            padding-right: 60px; 
+            box-sizing: border-box;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            position: fixed; top: 0; z-index: 1000; opacity: 0; transition: opacity 1s ease;
+            position: fixed; top: 0; z-index: 1000; 
+            opacity: 0; transition: opacity 1s ease;
         }
-        .nav-link { color: var(--nav-text); text-decoration: none; font-size: 13px; font-weight: 500; transition: 0.3s; }
-        .nav-link:hover { color: #fff; text-shadow: 0 0 5px var(--accent); }
+
+        .nav-link { 
+            color: var(--nav-text); 
+            text-decoration: none; 
+            font-size: 13px; 
+            font-weight: 500; 
+            margin-left: 40px; /* 按钮间距 */
+            transition: 0.3s;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .nav-link:hover { color: #fff; text-shadow: 0 0 8px var(--accent); }
 
         /* --- 主界面 --- */
         .container { 
@@ -97,7 +112,6 @@
         }
         button:hover { background: #fff; color: #000; }
         .btn-obf { border-color: var(--accent); color: var(--accent); }
-        .btn-obf:hover { background: var(--accent); color: #000; }
 
         .footer { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; border-top: 1px solid var(--border); padding-top: 15px; font-size: 10px; color: var(--text); }
         .contact-link { color: var(--accent); text-decoration: none; font-weight: bold; padding: 4px 10px; border: 1px solid var(--accent); border-radius: 4px; transition: 0.3s; }
@@ -113,12 +127,8 @@
     </div>
 
     <nav class="top-nav" id="top-nav">
-        <a href="#" class="nav-link">Home</a>
-        <a href="#" class="nav-link">Policy</a>
-        <a href="#" class="nav-link">Plans</a>
-        <a href="#" class="nav-link">Showcases</a>
-        <a href="#" class="nav-link">FAQ</a>
-        <a href="https://discord.com" target="_blank" class="nav-link">Discord</a>
+        <a href="#" class="nav-link">Downloads</a>
+        <a href="#" class="nav-link">Obfuscator</a>
     </nav>
 
     <div class="container" id="main-ui">
@@ -161,12 +171,12 @@
             const ui = document.getElementById('main-ui');
             const nav = document.getElementById('top-nav');
 
-            // 1. 0.5秒后：Icon在中间稍微侧移，白色文字滑出
+            // 开场：Icon居中，文字滑出
             setTimeout(() => {
                 container.classList.add('show-text');
-            }, 500);
+            }, 600);
 
-            // 2. 2.5秒后：文字消失，Icon飞往左上角，UI显示
+            // 结尾：Icon飞到角落，文字消失，主UI出现
             setTimeout(() => {
                 container.classList.add('move-to-corner');
                 splash.style.opacity = "0";
@@ -175,7 +185,7 @@
                 document.body.style.overflowY = "auto";
                 
                 setTimeout(() => { splash.style.display = "none"; }, 1000);
-            }, 2500);
+            }, 3000);
         };
 
         function build() {
