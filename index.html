@@ -6,8 +6,6 @@
     <style>
         :root { 
             --bg: #0b0b0b; 
-            /* 比背景色稍微浅一点点的灰色 */
-            --nav-bg: #151515; 
             --accent: #00ffaa; 
             --border: #222; 
             --text: #888; 
@@ -51,7 +49,6 @@
             text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
         }
 
-        /* 动画激活状态 */
         .show-text #intro-text {
             opacity: 1; width: 480px; margin-left: 35px;
         }
@@ -63,16 +60,15 @@
         .move-to-corner #logo-icon { width: 35px !important; }
         .move-to-corner #intro-text { opacity: 0 !important; width: 0 !important; margin-left: 0 !important; }
 
-        /* --- 修改后的 Top Bar (浅灰色+靠右) --- */
+        /* --- 透明导航栏 (仅文字) --- */
         .top-nav {
-            width: 100%; height: 60px; 
-            background: var(--nav-bg);
+            width: 100%; height: 80px; 
+            background: transparent; /* 去掉背景 */
             display: flex; 
-            justify-content: flex-end; /* 按钮靠右 */
+            justify-content: flex-end; 
             align-items: center; 
             padding-right: 60px; 
             box-sizing: border-box;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             position: fixed; top: 0; z-index: 1000; 
             opacity: 0; transition: opacity 1s ease;
         }
@@ -82,16 +78,16 @@
             text-decoration: none; 
             font-size: 13px; 
             font-weight: 500; 
-            margin-left: 40px; /* 按钮间距 */
+            margin-left: 45px; 
             transition: 0.3s;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
         }
-        .nav-link:hover { color: #fff; text-shadow: 0 0 8px var(--accent); }
+        .nav-link:hover { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
 
         /* --- 主界面 --- */
         .container { 
-            width: 900px; padding: 40px; margin-top: 100px;
+            width: 900px; padding: 40px; margin-top: 120px;
             opacity: 0; transition: opacity 1.5s ease;
         }
         .show-ui { opacity: 1 !important; }
@@ -171,12 +167,10 @@
             const ui = document.getElementById('main-ui');
             const nav = document.getElementById('top-nav');
 
-            // 开场：Icon居中，文字滑出
             setTimeout(() => {
                 container.classList.add('show-text');
             }, 600);
 
-            // 结尾：Icon飞到角落，文字消失，主UI出现
             setTimeout(() => {
                 container.classList.add('move-to-corner');
                 splash.style.opacity = "0";
@@ -188,6 +182,7 @@
             }, 3000);
         };
 
+        // Obfuscation functions...
         function build() {
             const src = document.getElementById('source').value;
             if(!src) return;
