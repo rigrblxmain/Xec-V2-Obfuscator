@@ -24,64 +24,70 @@
             overflow: hidden; 
         }
 
-        /* --- INTRO TEXT & LOGO --- */
+        /* --- 开屏动画层 --- */
         #splash {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 9998; transition: opacity 1s ease;
         }
 
         #intro-container {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            display: flex; align-items: center; z-index: 10000; gap: 20px;
+            position: fixed; top: 50%; left: 50%; 
+            transform: translate(-50%, -50%);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 10000; transition: all 1.2s cubic-bezier(0.85, 0, 0.15, 1);
         }
 
         #logo-icon {
-            width: 250px;
+            width: 200px; /* 初始大小 */
             transition: all 1.2s cubic-bezier(0.85, 0, 0.15, 1);
         }
 
         #intro-text {
-            font-size: 28px; font-weight: bold; letter-spacing: 6px; color: var(--accent);
+            font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #fff; /* 改为白色 */
             text-transform: uppercase; white-space: nowrap;
-            opacity: 0; transform: translateX(-30px); /* Start hidden/left */
+            opacity: 0; width: 0; overflow: hidden; /* 初始隐藏且不占位 */
             transition: all 0.8s ease-out;
-            text-shadow: 0 0 15px rgba(0, 255, 170, 0.4);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            margin-left: 0;
         }
 
-        /* Animation States */
-        .text-slide-in { opacity: 1 !important; transform: translateX(0) !important; }
-        .text-fade-out { opacity: 0 !important; }
-
-        .icon-at-corner {
-            position: fixed !important; top: 25px !important; left: 25px !important;
-            transform: translate(0, 0) !important; width: 35px !important;
+        /* 动画状态：文字展开 */
+        .show-text #intro-text {
+            opacity: 1; width: 450px; margin-left: 30px;
         }
 
-        /* --- TOP NAV --- */
+        /* 动画状态：Icon 归位到左上角 */
+        .move-to-corner {
+            top: 30px !important; left: 30px !important;
+            transform: translate(0, 0) !important;
+        }
+        .move-to-corner #logo-icon { width: 35px !important; }
+        .move-to-corner #intro-text { opacity: 0 !important; width: 0 !important; margin-left: 0 !important; }
+
+        /* --- 顶部导航栏 --- */
         .top-nav {
             width: 100%; height: 60px; background: var(--nav-bg);
             display: flex; justify-content: center; align-items: center; gap: 40px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             position: fixed; top: 0; z-index: 1000; opacity: 0; transition: opacity 1s ease;
         }
+        .nav-link { color: var(--nav-text); text-decoration: none; font-size: 13px; font-weight: 500; transition: 0.3s; }
+        .nav-link:hover { color: #fff; text-shadow: 0 0 5px var(--accent); }
 
-        .nav-link { color: var(--nav-text); text-decoration: none; font-size: 14px; transition: 0.3s; }
-        .nav-link:hover { color: #fff; }
-
-        /* --- UI CONTAINER --- */
+        /* --- 主界面 --- */
         .container { 
-            width: 900px; padding: 40px; margin-top: 80px;
+            width: 900px; padding: 40px; margin-top: 100px;
             opacity: 0; transition: opacity 1.5s ease;
         }
         .show-ui { opacity: 1 !important; }
 
         .header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-        .header h1 { font-size: 18px; letter-spacing: 4px; margin: 0; color: #fff; } 
+        .header h1 { font-size: 18px; letter-spacing: 2px; margin: 0; color: #fff; } 
         
         textarea { 
             width: 100%; background: #050505; color: var(--accent); border: 1px solid var(--border); 
             padding: 15px; box-sizing: border-box; border-radius: 4px; resize: none; 
-            font-family: 'Fira Code', 'Consolas', monospace; font-size: 11px; outline: none;
+            font-family: 'Consolas', monospace; font-size: 12px; outline: none;
         }
 
         .controls { display: flex; gap: 10px; margin: 20px 0; }
@@ -103,7 +109,7 @@
     
     <div id="intro-container">
         <img src="logo.png" id="logo-icon">
-        <div id="intro-text">X e c &nbsp; V 2 &nbsp; O b f u s c a t o r</div>
+        <div id="intro-text">Xec V2 Obfuscator</div>
     </div>
 
     <nav class="top-nav" id="top-nav">
@@ -112,23 +118,23 @@
         <a href="#" class="nav-link">Plans</a>
         <a href="#" class="nav-link">Showcases</a>
         <a href="#" class="nav-link">FAQ</a>
-        <a href="https://discord.com/users/718smiley.png" target="_blank" class="nav-link">Discord</a>
+        <a href="https://discord.com" target="_blank" class="nav-link">Discord</a>
     </nav>
 
     <div class="container" id="main-ui">
         <div class="header">
-            <h1>Xec V2 | Luau Obfuscator</h1>
-            <span>0.25.2a</span>
+            <h1>XEC V2 | LUAU SOURCE PROTECTION</h1>
+            <span>BUILD: 0.25.2a</span>
         </div>
 
         <div class="section">
             <div class="label">Header / ASCII</div>
-            <textarea id="ascii" style="height: 100px;"></textarea>
+            <textarea id="ascii" style="height: 80px;" placeholder="-- Custom header here..."></textarea>
         </div>
 
         <div class="section">
             <div class="label">Source Code</div>
-            <textarea id="source" style="height: 180px;"></textarea>
+            <textarea id="source" style="height: 180px;" placeholder="-- Paste Luau script here..."></textarea>
         </div>
 
         <div class="controls">
@@ -143,37 +149,33 @@
         </div>
 
         <div class="footer">
-            <div>&copy; XEC V2</div>
-            <div>Support: <a href="https://discord.com/users/718smiley.png" target="_blank" class="contact-link">L_EpicGuy</a></div>
+            <div>&copy; XEC V2 PROJECT</div>
+            <div>Support: <a href="#" class="contact-link">@L_EpicGuy</a></div>
         </div>
     </div>
 
     <script>
         window.onload = () => {
-            const icon = document.getElementById('logo-icon');
-            const text = document.getElementById('intro-text');
+            const container = document.getElementById('intro-container');
             const splash = document.getElementById('splash');
             const ui = document.getElementById('main-ui');
             const nav = document.getElementById('top-nav');
 
-            // 1. Slide Text in
+            // 1. 0.5秒后：Icon在中间稍微侧移，白色文字滑出
             setTimeout(() => {
-                text.classList.add('text-slide-in');
+                container.classList.add('show-text');
             }, 500);
 
-            // 2. Start shrinking and fade text out
+            // 2. 2.5秒后：文字消失，Icon飞往左上角，UI显示
             setTimeout(() => {
-                text.classList.add('text-fade-out');
-                icon.classList.add('icon-at-corner');
+                container.classList.add('move-to-corner');
                 splash.style.opacity = "0";
-                
-                // Show UI
                 ui.classList.add('show-ui');
                 nav.style.opacity = "1";
                 document.body.style.overflowY = "auto";
                 
                 setTimeout(() => { splash.style.display = "none"; }, 1000);
-            }, 2500); // Wait 2.5s before moving
+            }, 2500);
         };
 
         function build() {
