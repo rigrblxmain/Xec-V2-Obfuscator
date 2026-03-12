@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Xec v2 Obfuscator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xec V2 | Luau Obfuscator</title>
     <style>
         :root { 
             --bg: #0b0b0b; 
@@ -12,6 +13,7 @@
             --nav-text: #a1a1aa;
         }
         
+        /* 霓虹滚动条 */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #000; }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
@@ -23,7 +25,7 @@
             overflow: hidden; 
         }
 
-        /* --- 开屏动画层 --- */
+        /* --- 开屏动画 --- */
         #splash {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 9998; transition: opacity 1s ease;
@@ -60,57 +62,61 @@
         .move-to-corner #logo-icon { width: 35px !important; }
         .move-to-corner #intro-text { opacity: 0 !important; width: 0 !important; margin-left: 0 !important; }
 
-        /* --- 透明导航栏 (仅文字) --- */
+        /* --- 透明导航栏 --- */
         .top-nav {
             width: 100%; height: 80px; 
-            background: transparent; /* 去掉背景 */
-            display: flex; 
-            justify-content: flex-end; 
-            align-items: center; 
-            padding-right: 60px; 
-            box-sizing: border-box;
+            background: transparent;
+            display: flex; justify-content: flex-end; align-items: center; 
+            padding-right: 60px; box-sizing: border-box;
             position: fixed; top: 0; z-index: 1000; 
             opacity: 0; transition: opacity 1s ease;
         }
 
         .nav-link { 
-            color: var(--nav-text); 
-            text-decoration: none; 
-            font-size: 13px; 
-            font-weight: 500; 
-            margin-left: 45px; 
-            transition: 0.3s;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
+            color: var(--nav-text); text-decoration: none; font-size: 13px; font-weight: 500; 
+            margin-left: 45px; transition: 0.3s; letter-spacing: 1.5px; text-transform: uppercase;
         }
-        .nav-link:hover { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        .nav-link:hover { color: #fff; text-shadow: 0 0 10px var(--accent); }
 
-        /* --- 主界面 --- */
+        /* --- 主界面容器 --- */
         .container { 
-            width: 900px; padding: 40px; margin-top: 120px;
+            width: 900px; padding: 40px; margin-top: 100px;
             opacity: 0; transition: opacity 1.5s ease;
         }
         .show-ui { opacity: 1 !important; }
 
         .header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-        .header h1 { font-size: 18px; letter-spacing: 2px; margin: 0; color: #fff; } 
+        .header h1 { font-size: 18px; letter-spacing: 2px; margin: 0; color: #fff; text-transform: uppercase; } 
+        .header span { font-size: 10px; color: var(--text); font-weight: bold; }
+
+        .section { margin-bottom: 20px; }
+        .label { font-size: 9px; color: var(--text); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
         
         textarea { 
             width: 100%; background: #050505; color: var(--accent); border: 1px solid var(--border); 
             padding: 15px; box-sizing: border-box; border-radius: 4px; resize: none; 
-            font-family: 'Consolas', monospace; font-size: 12px; outline: none;
+            font-family: 'Consolas', 'Monaco', monospace; font-size: 12px; outline: none;
+            transition: border-color 0.3s;
         }
+        textarea:focus { border-color: #444; }
 
         .controls { display: flex; gap: 10px; margin: 20px 0; }
         button { 
             background: transparent; border: 1px solid var(--border); color: #fff; 
-            padding: 10px 25px; font-size: 11px; cursor: pointer; text-transform: uppercase; transition: 0.2s;
+            padding: 10px 25px; font-size: 11px; cursor: pointer; text-transform: uppercase; 
+            letter-spacing: 1px; transition: 0.2s;
         }
-        button:hover { background: #fff; color: #000; }
+        button:hover { background: #fff; color: #000; border-color: #fff; }
         .btn-obf { border-color: var(--accent); color: var(--accent); }
+        .btn-obf:hover { background: var(--accent); color: #000; box-shadow: 0 0 15px rgba(0,255,170,0.2); }
 
-        .footer { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; border-top: 1px solid var(--border); padding-top: 15px; font-size: 10px; color: var(--text); }
+        .footer { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-top: 30px; border-top: 1px solid var(--border); padding-top: 15px;
+            font-size: 10px; color: var(--text);
+        }
         .contact-link { color: var(--accent); text-decoration: none; font-weight: bold; padding: 4px 10px; border: 1px solid var(--accent); border-radius: 4px; transition: 0.3s; }
+        .contact-link:hover { background: var(--accent); color: #000; }
     </style>
 </head>
 <body>
@@ -123,7 +129,7 @@
     </div>
 
     <nav class="top-nav" id="top-nav">
-        <a href="#" class="nav-link">Downloads</a>
+        <a href="https://discord.com" target="_blank" class="nav-link">Discord</a>
         <a href="#" class="nav-link">Obfuscator</a>
     </nav>
 
@@ -135,12 +141,12 @@
 
         <div class="section">
             <div class="label">Header / ASCII</div>
-            <textarea id="ascii" style="height: 80px;" placeholder="-- Custom header here..."></textarea>
+            <textarea id="ascii" style="height: 80px;" placeholder="-- Paste your ASCII art here..."></textarea>
         </div>
 
         <div class="section">
-            <div class="label">Source Code</div>
-            <textarea id="source" style="height: 180px;" placeholder="-- Paste Luau script here..."></textarea>
+            <div class="label">Source Code (Luau)</div>
+            <textarea id="source" style="height: 180px;" placeholder="print('Hello World')"></textarea>
         </div>
 
         <div class="controls">
@@ -151,12 +157,12 @@
 
         <div class="section">
             <div class="label">Output</div>
-            <textarea id="output" style="height: 180px;" readonly></textarea>
+            <textarea id="output" style="height: 180px;" readonly placeholder="-- Result will appear here..."></textarea>
         </div>
 
         <div class="footer">
             <div>&copy; XEC V2 PROJECT</div>
-            <div>Support: <a href="#" class="contact-link">@L_EpicGuy</a></div>
+            <div>Support: <a href="https://discord.com" target="_blank" class="contact-link">@L_EpicGuy</a></div>
         </div>
     </div>
 
@@ -167,9 +173,13 @@
             const ui = document.getElementById('main-ui');
             const nav = document.getElementById('top-nav');
 
-            setTimeout(() => {
-                container.classList.add('show-text');
-            }, 600);
+            // 自动加载上次保存的 ASCII
+            if(localStorage.getItem('xec_ascii')) {
+                document.getElementById('ascii').value = localStorage.getItem('xec_ascii');
+            }
+
+            // 动画流
+            setTimeout(() => { container.classList.add('show-text'); }, 600);
 
             setTimeout(() => {
                 container.classList.add('move-to-corner');
@@ -177,23 +187,36 @@
                 ui.classList.add('show-ui');
                 nav.style.opacity = "1";
                 document.body.style.overflowY = "auto";
-                
                 setTimeout(() => { splash.style.display = "none"; }, 1000);
             }, 3000);
         };
 
-        // Obfuscation functions...
         function build() {
+            const ascii = document.getElementById('ascii').value;
             const src = document.getElementById('source').value;
             if(!src) return;
+
+            // 保存 ASCII 到本地缓存
+            localStorage.setItem('xec_ascii', ascii);
+
+            const inv = "\u2004"; 
+            let head = "";
+            if(ascii) {
+                ascii.split('\n').forEach(l => { head += "-- " + l.replace(/ /g, inv) + "\n"; });
+                head += "--\n--\n";
+            }
+
+            // 简单的混淆逻辑 (XOR Hex)
             const salt = Math.floor(Math.random() * 50) + 100;
             const bytes = new TextEncoder().encode(src);
             let hex = "";
             for (let b of bytes) { hex += (b ^ salt).toString(16).padStart(2, '0'); }
+
             const chunks = hex.match(/.{1,100}/g);
-            let res = `--[[ Xec v2 ]]\nlocal _v = ""\n`;
+            let res = head + `--[[ Obfuscated by Xec v2 ]]\nlocal _v = ""\n`;
             chunks.forEach(c => { res += `_v = _v .. "${c}"\n`; });
             res += `\nlocal _k = ${salt}\nlocal _b = {}\nfor i=1,#_v,2 do table.insert(_b,string.char(bit32.bxor(tonumber(_v:sub(i,i+1),16),_k))) end\nloadstring(table.concat(_b))()`;
+
             document.getElementById('output').value = res;
         }
 
@@ -201,6 +224,7 @@
             const el = document.getElementById('output');
             el.select();
             document.execCommand('copy');
+            alert("Copied to clipboard!");
         }
 
         function clearAll() {
