@@ -118,37 +118,37 @@
 
     <div class="container" id="main-ui">
         <div class="header">
-            <h1>XEC V2 | LUAU SOURCE PROTECTION</h1>
+            <h1>XEC V2 | LUAU OBFUSCATOR</h1>
             <span>BUILD: 0.25.2a</span>
         </div>
 
         <div class="section">
-            <div class="label">Header / ASCII</div>
-            <textarea id="ascii" style="height: 60px;" placeholder="-- Custom header..."></textarea>
+            <div class="label">Header</div>
+            <textarea id="ascii" style="height: 60px;" placeholder="add anything what ever u want"></textarea>
         </div>
 
         <div class="section">
             <div class="label">Source Code (Luau)</div>
-            <textarea id="source" style="height: 180px;" placeholder="print('Hello World')"></textarea>
+            <textarea id="source" style="height: 180px;" placeholder="HelloWorld!("Print")"></textarea>
         </div>
 
         <div class="controls">
-            <button class="btn-obf" onclick="build()">Obfuscate Source</button>
-            <button onclick="copy()">Copy Output</button>
+            <button class="btn-obf" onclick="build()">Obfuscate</button>
+            <button onclick="copy()">Copy</button>
             <button onclick="clearAll()">Clear</button>
         </div>
 
         <div class="section">
             <div class="label">Output</div>
-            <textarea id="output" style="height: 180px;" readonly placeholder="-- Result will appear here..."></textarea>
+            <textarea id="output" style="height: 180px;" readonly placeholder="-- Hello"></textarea>
         </div>
 
         <div class="loadstring-box">
-            <div class="label" style="color: #fff;">Lazy Loadstring Obfuscator</div>
-            <p style="font-size: 10px; color: #555; margin-bottom: 10px;">Paste a Raw URL to wrap and obfuscate instantly:</p>
+            <div class="label" style="color: #fff;">Loadstring maker</div>
+            <p style="font-size: 10px; color: #555; margin-bottom: 10px;">Paste a Raw URL:</p>
             <div style="display: flex; gap: 10px;">
-                <input type="text" id="raw-url" placeholder="Paste Raw URL (Github/Pastebin)...">
-                <button class="btn-obf" onclick="quickObfLoadstring()" style="white-space: nowrap;">Obfuscate URL</button>
+                <input type="text" id="raw-url" placeholder="hi again">
+                <button class="btn-obf" onclick="quickObfLoadstring()" style="white-space: nowrap;">Generate</button>
             </div>
         </div>
 
@@ -229,3 +229,4 @@
     </script>
 </body>
 </html>
+
