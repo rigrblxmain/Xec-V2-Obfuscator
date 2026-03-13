@@ -6,7 +6,6 @@
     <title>Xec V2 | Luau Obfuscator</title>
     
     <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
 
     <style>
         :root { 
@@ -27,48 +26,58 @@
             overflow: hidden; 
         }
 
-        /* --- 开屏动画层 --- */
+        /* --- INTRO / SPLASH LAYER --- */
         #splash {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 9998; transition: opacity 1s ease;
+            position: fixed; inset: 0;
+            background: #000; z-index: 9998; transition: opacity 1.2s ease;
         }
 
         #intro-container {
             position: fixed; top: 50%; left: 50%; 
             transform: translate(-50%, -50%);
             display: flex; align-items: center; justify-content: center;
-            z-index: 10000; transition: all 1.2s cubic-bezier(0.85, 0, 0.15, 1);
+            z-index: 10000;
         }
 
-        #logo-icon { width: 220px; transition: all 1.2s cubic-bezier(0.85, 0, 0.15, 1); }
-
-        #intro-text {
-            font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #fff; 
-            text-transform: uppercase; white-space: nowrap;
-            opacity: 0; width: 0; overflow: hidden;
-            transition: all 0.8s ease-out;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        /* The Animated Logo Parts */
+        .logo-part {
+            position: fixed; width: 300px; height: 300px;
+            top: calc(50% - 150px); left: calc(50% - 150px);
+            background: url('logo.png') no-repeat center;
+            background-size: contain;
+            transition: all 1.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform: scale(0) rotate(-220deg);
+            opacity: 0;
         }
 
-        .show-text #intro-text { opacity: 1; width: 480px; margin-left: 35px; }
+        /* Precision 135° Sharp Bevel Cut (4% / 96%) */
+        .top-half { clip-path: polygon(0 0, 100% 0, 100% 96%, 0 4%); }
+        .bottom-half { clip-path: polygon(0 4%, 100% 96%, 100% 100%, 0 100%); }
 
-        .move-to-corner { top: 30px !important; left: 30px !important; transform: translate(0, 0) !important; }
-        .move-to-corner #logo-icon { width: 35px !important; }
-        .move-to-corner #intro-text { opacity: 0 !important; width: 0 !important; margin-left: 0 !important; }
+        /* Animation States */
+        .ready { transform: scale(1) rotate(0deg) !important; opacity: 1 !important; }
+        
+        .exit-top { transform: translate(160vw, -160vh) scale(0.3) rotate(90deg) !important; transition: all 2.2s cubic-bezier(0.5, 0, 0.5, 1) !important; }
+        .exit-bottom { transform: translate(-160vw, 160vh) scale(0.3) rotate(-90deg) !important; transition: all 2.2s cubic-bezier(0.5, 0, 0.5, 1) !important; }
 
-        /* --- 主界面容器 --- */
+        .arrive { 
+            top: 30px !important; left: 30px !important; 
+            width: 45px !important; height: 45px !important; 
+            transform: translate(0, 0) scale(1) rotate(0deg) !important; 
+            transition: all 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.1) !important;
+        }
+
+        /* --- MAIN UI --- */
         .container { 
             width: 900px; padding: 40px; margin-top: 80px;
             opacity: 0; transition: opacity 1.5s ease;
             overflow-y: auto; max-height: 90vh;
-            scrollbar-width: none; 
         }
         .container::-webkit-scrollbar { display: none; }
-
         .show-ui { opacity: 1 !important; }
 
         .header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-        .header h1 { font-size: 18px; letter-spacing: 2px; margin: 0; color: #fff; text-transform: uppercase; } 
+        .header h1 { font-size: 18px; letter-spacing: 5px; margin: 0; color: #fff; text-transform: uppercase; margin-left: 60px; } 
 
         .section { margin-bottom: 25px; }
         .label { font-size: 9px; color: var(--text); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
@@ -79,7 +88,6 @@
             font-family: 'Consolas', monospace; font-size: 12px; outline: none;
             transition: 0.3s;
         }
-        input[type="text"]:focus, textarea:focus { border-color: #444; }
 
         .controls { display: flex; gap: 10px; margin: 15px 0; }
         button { 
@@ -87,125 +95,146 @@
             padding: 10px 25px; font-size: 11px; cursor: pointer; text-transform: uppercase; 
             letter-spacing: 1px; transition: 0.2s;
         }
-        button:hover { background: #fff; color: #000; border-color: #fff; }
-        .btn-obf { border-color: var(--accent); color: var(--accent); }
-        .btn-obf:hover { background: var(--accent); color: #000; }
+        button:hover { background: #fff; color: #000; }
+        .btn-main { border-color: var(--accent); color: var(--accent); }
+        .btn-main:hover { background: var(--accent); color: #000; box-shadow: 0 0 15px rgba(0, 255, 170, 0.2); }
 
-        /* Loadstring 卡片 */
         .loadstring-box {
             background: rgba(255,255,255,0.02);
             border: 1px dashed #333;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 40px;
+            padding: 20px; border-radius: 8px; margin-top: 40px;
         }
 
         .footer { 
             display: flex; justify-content: space-between; align-items: center; 
             margin-top: 30px; border-top: 1px solid var(--border); padding-top: 15px;
-            font-size: 10px; color: var(--text);
+            font-size: 10px; color: var(--text); padding-bottom: 40px;
         }
-        .contact-link { color: var(--accent); text-decoration: none; font-weight: bold; padding: 4px 10px; border: 1px solid var(--accent); border-radius: 4px; transition: 0.3s; }
     </style>
 </head>
 <body>
 
     <div id="splash"></div>
-    <div id="intro-container">
-        <img src="logo.png" id="logo-icon">
-        <div id="intro-text">Xec V2 Obfuscator</div>
-    </div>
+    
+    <div class="logo-part top-half" id="p1"></div>
+    <div class="logo-part bottom-half" id="p2"></div>
 
     <div class="container" id="main-ui">
         <div class="header">
-            <h1>XEC V2 | #1 LUAU OBFUSCATOR</h1>
-            <span>BUILD: 0.25.2a</span>
+            <h1>XEC V2 // LUAU OBFUSCATOR</h1>
+            <span style="color: #444; font-size: 10px;">PRIVATE BUILD</span>
         </div>
 
         <div class="section">
-            <div class="label">Header</div>
-            <textarea id="ascii" style="height: 60px;" placeholder="add anything what ever u want"></textarea>
+            <div class="label">Custom Header</div>
+            <textarea id="ascii" style="height: 60px;" placeholder="-- Custom ASCII / Credits here"></textarea>
         </div>
 
         <div class="section">
-            <div class="label">Source Code (Luau)</div>
-            <textarea id="source" style="height: 180px;" placeholder="script here"></textarea>
+            <div class="label">Source Code</div>
+            <textarea id="source" style="height: 180px;" placeholder="Paste your script..."></textarea>
         </div>
 
         <div class="controls">
-            <button class="btn-obf" onclick="build()">Obfuscate</button>
-            <button onclick="copy()">Copy</button>
+            <button class="btn-main" onclick="build()">Obfuscate</button>
+            <button onclick="copy()">Copy Output</button>
             <button onclick="clearAll()">Clear</button>
         </div>
 
         <div class="section">
-            <div class="label">Output</div>
-            <textarea id="output" style="height: 180px;" readonly placeholder="-- Hello"></textarea>
+            <div class="label">Protected Output</div>
+            <textarea id="output" style="height: 180px;" readonly placeholder="-- Encrypted code will appear here"></textarea>
         </div>
 
         <div class="loadstring-box">
-            <div class="label" style="color: #fff;">Loadstring maker</div>
-            <p style="font-size: 10px; color: #555; margin-bottom: 10px;">Paste a Raw URL:</p>
-            <div style="display: flex; gap: 10px;">
-                <input type="text" id="raw-url" placeholder="hi again">
-                <button class="btn-obf" onclick="quickObfLoadstring()" style="white-space: nowrap;">Generate</button>
+            <div class="label" style="color: #fff;">Loadstring Generator</div>
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <input type="text" id="raw-url" placeholder="Paste GitHub Raw URL...">
+                <button class="btn-main" onclick="quickObfLoadstring()" style="white-space: nowrap;">Generate</button>
             </div>
         </div>
 
         <div class="footer">
             <div>&copy; XEC V2 PROJECT</div>
-            <div>Support: <a href="https://discord.com" target="_blank" class="contact-link">@L_EpicGuy</a></div>
+            <div>Support: <span style="color: var(--accent)">@L_EpicGuy</span></div>
         </div>
     </div>
 
     <script>
         window.onload = () => {
-            const container = document.getElementById('intro-container');
+            const p1 = document.getElementById('p1');
+            const p2 = document.getElementById('p2');
             const splash = document.getElementById('splash');
             const ui = document.getElementById('main-ui');
+
+            // 1. Slow Power-up Spin
+            setTimeout(() => { 
+                p1.classList.add('ready'); 
+                p2.classList.add('ready'); 
+            }, 500);
+
+            // 2. Slow-Mo Split & Exit
+            setTimeout(() => {
+                p1.classList.add('exit-top');
+                p2.classList.add('exit-bottom');
+            }, 3000);
+
+            // 3. Glide Return to Corner
+            setTimeout(() => {
+                splash.style.opacity = "0";
+                ui.classList.add('show-ui');
+
+                p1.style.transition = "none";
+                p2.style.transition = "none";
+                p1.style.transform = "translate(-300px, -300px)";
+                p2.style.transform = "translate(-300px, -300px)";
+                
+                setTimeout(() => {
+                    p1.classList.add('arrive');
+                    p2.classList.add('arrive');
+                }, 100);
+            }, 4800);
+
+            setTimeout(() => { splash.style.display = "none"; }, 6500);
 
             if(localStorage.getItem('xec_ascii')) {
                 document.getElementById('ascii').value = localStorage.getItem('xec_ascii');
             }
-
-            setTimeout(() => { container.classList.add('show-text'); }, 600);
-
-            setTimeout(() => {
-                container.classList.add('move-to-corner');
-                splash.style.opacity = "0";
-                ui.classList.add('show-ui');
-                document.body.style.overflowY = "auto";
-                setTimeout(() => { splash.style.display = "none"; }, 1000);
-            }, 3000);
         };
 
         function xec_obfuscate(input) {
             const ascii = document.getElementById('ascii').value;
-            const inv = "\u2004"; 
             let head = "";
             if(ascii) {
-                ascii.split('\n').forEach(l => { head += "-- " + l.replace(/ /g, inv) + "\n"; });
+                ascii.split('\n').forEach(l => { head += "-- " + l + "\n"; });
                 head += "--\n";
             }
             
-            const salt = Math.floor(Math.random() * 50) + 100;
+            // Hardened Rolling Key Stream
+            const keys = [
+                Math.floor(Math.random() * 50) + 100,
+                Math.floor(Math.random() * 50) + 50,
+                Math.floor(Math.random() * 50) + 150
+            ];
+            
             const bytes = new TextEncoder().encode(input);
             let hex = "";
-            for (let b of bytes) { hex += (b ^ salt).toString(16).padStart(2, '0'); }
+            
+            for (let i = 0; i < bytes.length; i++) {
+                const salt = keys[i % keys.length];
+                hex += (bytes[i] ^ salt).toString(16).padStart(2, '0');
+            }
 
             const chunks = hex.match(/.{1,100}/g);
-            let res = head + `--[[ Obfuscated by Xec v2 ]]\nlocal _v = ""\n`;
+            let res = head + `--[[ Protected by Xec V2 ]]\nlocal _v = ""\n`;
             chunks.forEach(c => { res += `_v = _v .. "${c}"\n`; });
-            res += `\nlocal _k = ${salt}\nlocal _b = {}\nfor i=1,#_v,2 do table.insert(_b,string.char(bit32.bxor(tonumber(_v:sub(i,i+1),16),_k))) end\nloadstring(table.concat(_b))()`;
+            
+            res += `\nlocal _k = {${keys.join(',')}}\n`;
+            res += `local _b = {}\nfor i=1,#_v,2 do\n  local _idx = (math.ceil(i/2)-1) % #_k + 1\n`;
+            res += `  table.insert(_b, string.char(bit32.bxor(tonumber(_v:sub(i,i+1),16), _k[_idx])))\nend\n`;
+            res += `loadstring(table.concat(_b))()`;
+            
             return res;
-        }
-
-        function quickObfLoadstring() {
-            const url = document.getElementById('raw-url').value.trim();
-            if(!url) return;
-            const loadstring_code = `loadstring(game:HttpGet("${url}"))()`;
-            document.getElementById('output').value = xec_obfuscate(loadstring_code);
-            document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
         }
 
         function build() {
@@ -213,6 +242,12 @@
             if(!src) return;
             localStorage.setItem('xec_ascii', document.getElementById('ascii').value);
             document.getElementById('output').value = xec_obfuscate(src);
+        }
+
+        function quickObfLoadstring() {
+            const url = document.getElementById('raw-url').value.trim();
+            if(!url) return;
+            document.getElementById('output').value = xec_obfuscate(`loadstring(game:HttpGet("${url}"))()`);
         }
 
         function copy() {
@@ -224,10 +259,7 @@
         function clearAll() {
             document.getElementById('source').value = "";
             document.getElementById('output').value = "";
-            document.getElementById('raw-url').value = "";
         }
     </script>
 </body>
 </html>
-
-
