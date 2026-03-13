@@ -8,90 +8,39 @@
     <link rel="icon" type="image/png" href="logo.png">
 
     <style>
-        :root { 
-            --bg: #0b0b0b; 
-            --accent: #00ffaa; 
-            --border: #222; 
-            --text: #888; 
-        }
-        
+        :root { --bg: #0b0b0b; --accent: #00ffaa; --border: #222; --text: #888; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #000; }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+        body { background: var(--bg); color: #eee; font-family: 'Inter', 'Segoe UI', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow: hidden; }
 
-        body { 
-            background: var(--bg); color: #eee; font-family: 'Inter', 'Segoe UI', sans-serif; 
-            margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh;
-            overflow: hidden; 
-        }
-
-        /* --- ORIGINAL SPLASH STYLE --- */
-        #splash {
-            position: fixed; inset: 0;
-            background: #000; z-index: 9998; transition: opacity 1s ease;
-        }
-
-        #intro-container {
-            position: fixed; top: 50%; left: 50%; 
-            transform: translate(-50%, -50%);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 10000; transition: all 1.2s cubic-bezier(0.85, 0, 0.15, 1);
-        }
-
-        /* The beveled icon logo */
+        /* --- SPLASH --- */
+        #splash { position: fixed; inset: 0; background: #000; z-index: 9998; transition: opacity 1s ease; }
+        #intro-container { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; z-index: 10000; transition: all 1.2s cubic-bezier(0.85, 0, 0.15, 1); }
         #logo-wrapper { position: relative; width: 220px; height: 220px; transition: 1.2s; }
-        .logo-part {
-            position: absolute; inset: 0;
-            background: url('logo.png') no-repeat center;
-            background-size: contain;
-        }
-        /* Lock the 4/96 Sharp Angle */
+        .logo-part { position: absolute; inset: 0; background: url('logo.png') no-repeat center; background-size: contain; }
         .top-half { clip-path: polygon(0 0, 100% 0, 100% 96%, 0 4%); }
         .bottom-half { clip-path: polygon(0 4%, 100% 96%, 100% 100%, 0 100%); }
-
-        #intro-text {
-            font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #fff; 
-            text-transform: uppercase; white-space: nowrap;
-            opacity: 0; width: 0; overflow: hidden;
-            transition: all 0.8s ease-out;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-        }
-
+        #intro-text { font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #fff; text-transform: uppercase; white-space: nowrap; opacity: 0; width: 0; overflow: hidden; transition: all 0.8s ease-out; }
         .show-text #intro-text { opacity: 1; width: 480px; margin-left: 35px; }
-
-        /* The Corner Slide */
         .move-to-corner { top: 30px !important; left: 30px !important; transform: translate(0, 0) !important; }
         .move-to-corner #logo-wrapper { width: 35px !important; height: 35px !important; }
         .move-to-corner #intro-text { opacity: 0 !important; width: 0 !important; margin-left: 0 !important; }
 
-        /* --- MAIN UI --- */
-        .container { 
-            width: 900px; padding: 40px; margin-top: 80px;
-            opacity: 0; transition: opacity 1.5s ease;
-            overflow-y: auto; max-height: 90vh;
-        }
+        /* --- UI --- */
+        .container { width: 900px; padding: 40px; margin-top: 80px; opacity: 0; transition: opacity 1.5s ease; overflow-y: auto; max-height: 90vh; }
         .show-ui { opacity: 1 !important; }
-
         .header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
         .header h1 { font-size: 18px; letter-spacing: 2px; margin: 0; color: #fff; text-transform: uppercase; margin-left: 50px; } 
-
         .section { margin-bottom: 25px; }
         .label { font-size: 9px; color: var(--text); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
         
-        textarea, input[type="text"] { 
-            width: 100%; background: #050505; color: var(--accent); border: 1px solid var(--border); 
-            padding: 15px; box-sizing: border-box; border-radius: 4px; 
-            font-family: 'Consolas', monospace; font-size: 12px; outline: none;
-        }
-
-        button { 
-            background: transparent; border: 1px solid var(--border); color: #fff; 
-            padding: 10px 25px; font-size: 11px; cursor: pointer; text-transform: uppercase; 
-            letter-spacing: 1px; transition: 0.2s;
-        }
+        textarea, input[type="text"] { width: 100%; background: #050505; color: var(--accent); border: 1px solid var(--border); padding: 15px; box-sizing: border-box; border-radius: 4px; font-family: 'Consolas', monospace; font-size: 12px; outline: none; }
+        button { background: transparent; border: 1px solid var(--border); color: #fff; padding: 10px 25px; font-size: 11px; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
         button:hover { background: var(--accent); color: #000; border-color: var(--accent); }
 
+        .ls-row { display: flex; gap: 10px; align-items: center; margin-top: 10px; }
+        .toggle-label { font-size: 10px; color: var(--text); display: flex; align-items: center; gap: 5px; cursor: pointer; }
         .footer { margin-top: 30px; border-top: 1px solid var(--border); padding-top: 15px; font-size: 10px; color: var(--text); padding-bottom: 40px; }
     </style>
 </head>
@@ -114,23 +63,34 @@
 
         <div class="section">
             <div class="label">Header</div>
-            <textarea id="ascii" style="height: 60px;" placeholder="Credits / ASCII"></textarea>
+            <textarea id="ascii" style="height: 60px;" placeholder="Credits / ASCII" spellcheck="false"></textarea>
         </div>
 
         <div class="section">
             <div class="label">Source Code</div>
-            <textarea id="source" style="height: 180px;" placeholder="Paste script..."></textarea>
+            <textarea id="source" style="height: 180px;" placeholder="Paste script..." spellcheck="false"></textarea>
         </div>
 
         <div style="display: flex; gap: 10px; margin-bottom: 20px;">
             <button onclick="build()" style="border-color: var(--accent); color: var(--accent);">Obfuscate</button>
             <button onclick="copy()">Copy</button>
-            <button onclick="clearAll()">Clear</button>
+            <button onclick="clearAll()">Clear All</button>
         </div>
 
         <div class="section">
             <div class="label">Output</div>
-            <textarea id="output" style="height: 180px;" readonly placeholder="-- Output"></textarea>
+            <textarea id="output" style="height: 180px;" readonly placeholder="-- Output" spellcheck="false"></textarea>
+        </div>
+
+        <div class="section">
+            <div class="label">Loadstring Maker</div>
+            <input type="text" id="raw-url" placeholder="GitHub Raw / Pastebin URL..." spellcheck="false">
+            <div class="ls-row">
+                <label class="toggle-label">
+                    <input type="checkbox" id="ls-cache-bool" checked> Enable Content-Cache (true)
+                </label>
+                <button onclick="makeLoadstring()">Generate Loadstring</button>
+            </div>
         </div>
 
         <div class="footer">
@@ -144,9 +104,7 @@
             const container = document.getElementById('intro-container');
             const splash = document.getElementById('splash');
             const ui = document.getElementById('main-ui');
-
             setTimeout(() => { container.classList.add('show-text'); }, 600);
-
             setTimeout(() => {
                 container.classList.add('move-to-corner');
                 splash.style.opacity = "0";
@@ -154,7 +112,6 @@
                 document.body.style.overflowY = "auto";
                 setTimeout(() => { splash.style.display = "none"; }, 1000);
             }, 3000);
-
             if(localStorage.getItem('xec_ascii')) {
                 document.getElementById('ascii').value = localStorage.getItem('xec_ascii');
             }
@@ -165,11 +122,8 @@
             const bytes = new TextEncoder().encode(input);
             let hex = "";
             for (let i = 0; i < bytes.length; i++) { hex += (bytes[i] ^ keys[i % keys.length]).toString(16).padStart(2, '0'); }
-            
             let res = `--[[ Obfuscated by Xec V2 ]]\nlocal _v = ""\n`;
-            const chunks = hex.match(/.{1,100}/g);
-            chunks.forEach(c => { res += `_v = _v .. "${c}"\n`; });
-            
+            hex.match(/.{1,100}/g).forEach(c => { res += `_v = _v .. "${c}"\n`; });
             res += `\nlocal _k = {${keys.join(',')}}\nlocal _b = {}\nfor i=1,#_v,2 do\n  local _idx = (math.ceil(i/2)-1) % #_k + 1\n  table.insert(_b, string.char(bit32.bxor(tonumber(_v:sub(i,i+1),16), _k[_idx])))\nend\nloadstring(table.concat(_b))()`;
             return res;
         }
@@ -180,8 +134,16 @@
             localStorage.setItem('xec_ascii', document.getElementById('ascii').value);
             document.getElementById('output').value = xec_obfuscate(src); 
         }
+
+        function makeLoadstring() {
+            const url = document.getElementById('raw-url').value;
+            const cache = document.getElementById('ls-cache-bool').checked;
+            if(!url) return;
+            document.getElementById('output').value = `loadstring(game:HttpGet("${url}", ${cache}))()`;
+        }
+
         function copy() { document.getElementById('output').select(); document.execCommand('copy'); }
-        function clearAll() { document.getElementById('source').value = ""; document.getElementById('output').value = ""; }
+        function clearAll() { document.getElementById('source').value = ""; document.getElementById('output').value = ""; document.getElementById('raw-url').value = ""; }
     </script>
 </body>
 </html>
